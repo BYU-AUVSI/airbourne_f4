@@ -54,8 +54,8 @@ int main()
   int i = 0;
   while (1)
   {
-    uint8_t hello_string[9] = "testing\n";
-    //uart.write(hello_string, 8); // Uncomment to test Tx
+    uint8_t hello_string[10] = "testing\n\r";
+    uart.write(hello_string, 9); // Uncomment to test Tx
     delay(100);
 
     // Polling version (uncomment to test)
