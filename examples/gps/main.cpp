@@ -73,10 +73,11 @@ int main()
   {
     if (gps.new_data())
     {
-      gps.read(lla, vel, &fix_type, &t_ms);
-      printf("fix: %s\tt: %d\tlla: %6.6f, %6.6f, %4.2f\tvel: %3.3f, %3.3f, %3.3f\n",
-             fix_names[fix_type].c_str(), t_ms, lla[0], lla[1], lla[2],
-             (double)vel[0], (double)vel[1], (double)vel[2]);
+      struct UBLOX::GNSSPVT data;
+	  data = gps.read();
+	  printf("t: %d\tlla: %6.6f, %6.6f, %4.2f\tvel: %3.3f, %3.3f, %3.3f\n\r",
+			 data.time, (float)data.lat, (float)data.lon, (float)data.height,
+			 (double)data.vel_n, (double)data.vel_e, (double)data.vel_d);
       led1.toggle();
     }
   }
