@@ -14,3 +14,7 @@
 *.swp
 *.map
 *.orig
+
+/ugv/*/obj/
+/ugv/*/processor/
+/ugv/*/src/
