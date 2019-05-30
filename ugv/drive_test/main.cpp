@@ -32,6 +32,7 @@
 #include "system.h"
 #include "pwm.h"
 #include "led.h"
+#include "ugv_drive.h"
 
 #include "revo_f4.h"
 
@@ -65,62 +66,6 @@ static void _putc(void *p, char c)
 }
 
 
-/* setDriveSpeed
- * Given a value between [-1, 1], set the drive motor to a cooresponding speed
- */
-void setDriveSpeed(double delta_t, PWM_OUT drive_pwm)
-{
-	uint32_t throttle = UGV_DRIVE_STOP + (int)(delta_t*(UGV_DRIVE_MAX_PWM - UGV_DRIVE_STOP));
-	drive_pwm.writeUs(throttle);
-	printf("wrote %d to drive\n\r", throttle);
-}
-
-/* saturateSteeringAngle
- * Given an angle value make sure it is within [-UGV_MAX_STEERING_ANGLE, UGV_MAX_STEERING_ANGLE].
- */
-double saturateSteeringAngle(double angle)
-{
-	if (angle > UGV_MAX_STEERING_ANGLE)
-	{
-		return UGV_MAX_STEERING_ANGLE;
-	}
-	else if (angle < -UGV_MAX_STEERING_ANGLE)
-	{
-		return -UGV_MAX_STEERING_ANGLE;
-	}
-	else
-	{
-		return angle;
-	}
-}
-
-
-/* setSteeringAngle
- * given an angle, set the wheels to that angle. 
- * A positive angle turns the wheels to the right.
- */
-void setSteeringAngle(double angle, PWM_OUT servo_pwm)
-{
-	angle = saturateSteeringAngle(angle);
-	double delta_a = angle/UGV_MAX_STEERING_ANGLE;
-	uint32_t setpoint = UGV_STRAIGHT_PWM + (int) (delta_a*(UGV_LEFT_PWM - UGV_STRAIGHT_PWM));
-	servo_pwm.writeUs(setpoint);
-	printf("wrote %d to steer\n\r", setpoint);
-}
-
-/* killDrive
- * set drive and steering servos to centerpoints
- * turn off pwm to entirely disable both
- */
-void killDrive(PWM_OUT servo_pwm, PWM_OUT drive_pwm)
-{
-	setDriveSpeed(0.0, drive_pwm);
-	setSteeringAngle(0.0, steer_pwm);
-	steer_pwm.disable();
-	drive_pwm.disable();
-}
-
-
 void rx_callback(uint8_t byte)
 {
   uartPtr->put_byte(byte);
@@ -142,44 +87,39 @@ int main()
 	info.init(LED2_GPIO, LED2_PIN);
 	info.on();
 
-	PWM_OUT drive_pwm_out;
-	drive_pwm_out.init(&pwm_config[UGV_DRIVE_PIN], UGV_FREQ, UGV_DRIVE_MAX_PWM, UGV_DRIVE_MIN_PWM);
-	drive_pwm_out.writeUs(UGV_DRIVE_STOP);
-
-	PWM_OUT steer_pwm_out;
-	steer_pwm_out.init(&pwm_config[UGV_STEER_PIN], UGV_FREQ, UGV_STEER_MAX_PWM, UGV_STEER_MIN_PWM);
-	steer_pwm_out.writeUs(UGV_STRAIGHT_PWM);
+	UGV_DRIVE drive;
+	drive.init();
 
 	delay(5000);
 
 	// straight ahead
 	printf("straight ahead\n\r");
-	setSteeringAngle(0.0, steer_pwm_out);
-	setDriveSpeed(0.4, drive_pwm_out);
+	drive.setSteeringAngle(0.0);
+	drive.setDriveSpeed(0.4);
 	delay(2000);
 
 	info.toggle();
 	// stop
 	printf("stop\n\r");
-	setDriveSpeed(0.0, drive_pwm_out);
+	drive.setDriveSpeed(0.0);
 	delay(1000);
 
 	info.toggle();
 	// turn wheels left
 	printf("turn wheels left\n\r");
-	setSteeringAngle(20, steer_pwm_out);
+	drive.setSteeringAngle(20);
 	delay(1000);
 
 	info.toggle();
 	// drive 1 sec
 	printf("drive 1 sec\n\r");
-	setDriveSpeed(.4, drive_pwm_out);
+	drive.setDriveSpeed(.4);
 	delay(1000);
 	
 	info.toggle();
 	// stop
 	printf("killing\n\r");
-	killDrive(steer_pwm_out, drive_pwm_out);
+	drive.kill();
 	delay(1000);
 
 

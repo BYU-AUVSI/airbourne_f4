@@ -61,6 +61,7 @@ USBCDC_DIR    = $(ROOT)/lib/STM32_USB_Device_Library/Class/cdc
 VCP_DIR       = $(ROOT)/lib/vcp
 STARTUP_DIR   = $(ROOT)/lib/startup
 PRINTF_DIR    = $(ROOT)/lib/printf
+UGV_SRC_DIR	  = $(ROOT)/ugv/src
 BIN_DIR       = obj
 
 #################################
@@ -128,9 +129,11 @@ CXXSOURCES = $(SRC_DIR)/gpio.cpp \
              $(SRC_DIR)/uart.cpp \
              $(PRINTF_DIR)/printf.cpp \
 			 $(SRC_DIR)/pwm.cpp \
+			 $(UGV_SRC_DIR)/ugv_drive.cpp \
              main.cpp
 
 INCLUDE_DIRS =  $(SRC_DIR) \
+				$(UGV_SRC_DIR) \
                 $(ROOT)/include \
                 $(STDPERIPH_DIR)/inc \
                 $(USBOTG_DIR)/inc \
