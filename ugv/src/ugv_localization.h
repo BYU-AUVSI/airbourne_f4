@@ -15,7 +15,6 @@
 #include "ublox.h"
 #include "revo_f4.h"
 #include "printf.h"
-#include "led.h"
 
 class UGV_LOCALIZATION
 {
@@ -23,17 +22,15 @@ class UGV_LOCALIZATION
 
 		void init(int uart_num);
 
-		void pull_gps(float *lat, float *lon);
+		bool pull_gps();
+		void print_gps();
 
 	private:
-		VCP vcp;
 		UART uart;
 		UBLOX gps;
-		LED led1;
 		double lla[3] = {};
-	  float vel[3] = {};
-	  uint8_t fix_type = 0;
-	  uint32_t t_ms;
+		double vel[3] = {};
+		uint32_t t_ms;
 };
 
 #endif /* UGV_LOCALIZ_H */
