@@ -38,12 +38,50 @@
 #include "printf.h"
 #include "led.h"
 
+#include "ugv_localization.h"
+
+UART* uartPtr;
+
+#define FLEXIPORT_UART UART3
+#define MAINPORT_UART UART1
+
+static void _putc(void *p, char c)
+{
+    (void)p; // avoid compiler warning about unused variable
+    uartPtr->put_byte(c);
+}
+
+
+void rx_callback(uint8_t byte)
+{
+  uartPtr->put_byte(byte);
+}
 
 int main()
 {
-  UGV_LOCALIZATION ugv_localization;
-  ugv_localization.init(UART3);
-  float latitude;
-  float longitude;
-  ugv_localization.pull_gps(&latitude, &longitude);
+	systemInit();
+
+	UART uart;
+	uart.init(&uart_config[MAINPORT_UART], 9600);
+	uartPtr = &uart;
+	uart.register_rx_callback(rx_callback);  // Uncomment to test callback version
+
+	LED led1;
+	led1.init(LED1_GPIO, LED1_PIN);
+	LED led2;
+	led2.init(LED2_GPIO, LED2_PIN);
+
+	init_printf(NULL, _putc);
+	delay(2000);
+	printf("Printf initialized!\n\r");
+	UGV_LOCALIZATION ugv_localization;
+	ugv_localization.init(FLEXIPORT_UART);
+	delay(1000);
+
+	while(true) {
+		if(ugv_localization.pull_gps()) {
+			ugv_localization.print_gps();
+			led1.toggle();
+		}
+	}
 }
