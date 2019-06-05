@@ -30,7 +30,6 @@
  */
 
 #include "system.h"
-#include "pwm.h"
 #include "led.h"
 #include "ugv_drive.h"
 
@@ -39,23 +38,11 @@
 #include "printf.h"
 #include "uart.h"
 
+#include <Eigen/Core>
 
 
-#define UGV_NUM_PWM 2
-#define UGV_FREQ 50
 #define UGV_DRIVE_PIN 0 // PWM port 1 for the drive motor
 #define UGV_STEER_PIN 1 // PWM port 2 for the steering servo
-
-#define UGV_STRAIGHT_PWM 1100 // PWM command that makes the wheels straight
-#define UGV_LEFT_PWM 1650	  // PWM command that turns the wheels left
-#define UGV_RIGHT_PWM 650	  // PWM command that turns the wheels right
-#define UGV_MAX_STEERING_ANGLE 35 // degrees, the max angle to the left/right the wheels can steer
-#define UGV_STEER_MAX_PWM UGV_LEFT_PWM
-#define UGV_STEER_MIN_PWM UGV_RIGHT_PWM
-
-#define UGV_DRIVE_STOP 1500
-#define UGV_DRIVE_MAX_PWM 2000
-#define UGV_DRIVE_MIN_PWM 1000
 
 UART* uartPtr = NULL;
 
@@ -88,7 +75,7 @@ int main()
 	info.on();
 
 	UGV_DRIVE drive;
-	drive.init();
+	drive.init(UGV_DRIVE_PIN, UGV_STEER_PIN);
 
 	delay(5000);
 
