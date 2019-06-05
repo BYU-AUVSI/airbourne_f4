@@ -13,7 +13,7 @@ class UGV_DRIVE
 {
 	public:
 
-		void init();
+		void init(uint32_t drive_pin, uint32_t servo_pin);
 		
 		/* setSteeringAngle
 		 * given an angle, set the wheels to that angle. 

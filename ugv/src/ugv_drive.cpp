@@ -10,8 +10,6 @@
 
 
 #define UGV_FREQ 50
-#define UGV_DRIVE_PIN 0 // PWM port 1 for the drive motor
-#define UGV_STEER_PIN 1 // PWM port 2 for the steering servo
 
 #define UGV_STRAIGHT_PWM 1100 // PWM command that makes the wheels straight
 #define UGV_LEFT_PWM 1650	  // PWM command that turns the wheels left
@@ -44,12 +42,12 @@ static double saturateSteeringAngle(double angle)
 	}
 }
 
-void UGV_DRIVE::init()
+void UGV_DRIVE::init(uint32_t drive_pin, uint32_t servo_pin)
 {
-	drive_pwm.init(&pwm_config[UGV_DRIVE_PIN], UGV_FREQ, UGV_DRIVE_MAX_PWM, UGV_DRIVE_MIN_PWM);
+	drive_pwm.init(&pwm_config[drive_pin], UGV_FREQ, UGV_DRIVE_MAX_PWM, UGV_DRIVE_MIN_PWM);
 	drive_pwm.writeUs(UGV_DRIVE_STOP);
 
-	servo_pwm.init(&pwm_config[UGV_STEER_PIN], UGV_FREQ, UGV_STEER_MAX_PWM, UGV_STEER_MIN_PWM);
+	servo_pwm.init(&pwm_config[servo_pin], UGV_FREQ, UGV_STEER_MAX_PWM, UGV_STEER_MIN_PWM);
 	servo_pwm.writeUs(UGV_STRAIGHT_PWM);
 }
 
