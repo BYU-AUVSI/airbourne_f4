@@ -16,22 +16,6 @@ class UGV_LOCALIZATION
 
 		void init(UBLOX gnss);
 		
-		/* setSteeringAngle
-		 * given an angle, set the wheels to that angle. 
-		 * A positive angle turns the wheels to the right.
-		 */
-		void setSteeringAngle(double angle);
-		
-		/* setDriveSpeed
-		 * Given a value between [-1, 1], set the drive motor to a cooresponding speed
-		 */
-		void setDriveSpeed(double delta_t);
-
-		/* kill
-		 * set drive and steering servos to centerpoints
-		 * turn off pwm to entirely disable both
-		 */
-		void kill();
 
 	private:
 		UBLOX _ubx
