@@ -16,18 +16,18 @@
 #include "revo_f4.h"
 #include "printf.h"
 
+#define RAD_TO_DEG 180/3.14
+
 class UGV_LOCALIZATION
 {
 	public:
 
-		void init(int uart_num);
+		void init(UBLOX* gps_);
 
 		bool pull_gps();
 		void print_gps();
 
-	private:
-		UART uart;
-		UBLOX gps;
+		UBLOX* gps;
 		double lla[3] = {};
 		double vel[3] = {};
 		double heading;

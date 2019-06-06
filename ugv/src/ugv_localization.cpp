@@ -5,23 +5,23 @@
  */
 
 #include <stdbool.h>
+#include <math.h>
 #include "ugv_localization.h"
+#include "led.h"
+#include "ublox.h"
 
-#define RAD_TO_DEG 180/3.14
 
-void UGV_LOCALIZATION::init(int uart_num){
+void UGV_LOCALIZATION::init(UBLOX* gps_){
 
-  UART uart;
-  uart.init(&uart_config[UART3], 115200);
+  this->gps = gps_;
 
-  gps.init(&uart);
 }
 
 bool UGV_LOCALIZATION::pull_gps(){
-	if (gps.new_data())
+	if (this->gps->new_data())
 	{
 		struct UBLOX::GNSSPVT data;
-		data = gps.read();
+		data = this->gps->read();
 		printf("got data\n\r");
 		lla[0] = (double)data.lat;
 		lla[1] = (double)data.lon;
@@ -29,7 +29,7 @@ bool UGV_LOCALIZATION::pull_gps(){
 		vel[0] = (double)data.vel_n;
 		vel[1] = (double)data.vel_e;
 		vel[2] = (double)data.vel_d;
-    heading = atan2(vel[0], vel[1])*RAD_TO_DEG;
+		heading = atan2(vel[0], vel[1])*RAD_TO_DEG;
 		t_ms = data.time;
 		return true;
 	}
