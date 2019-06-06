@@ -30,6 +30,7 @@ class UGV_LOCALIZATION
 		UBLOX gps;
 		double lla[3] = {};
 		double vel[3] = {};
+		double heading;
 		uint32_t t_ms;
 };
 

@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include "ugv_localization.h"
 
+#define RAD_TO_DEG 180/3.14
+
 void UGV_LOCALIZATION::init(int uart_num){
 
   UART uart;
@@ -27,6 +29,7 @@ bool UGV_LOCALIZATION::pull_gps(){
 		vel[0] = (double)data.vel_n;
 		vel[1] = (double)data.vel_e;
 		vel[2] = (double)data.vel_d;
+    heading = atan2(vel[0], vel[1])*RAD_TO_DEG;
 		t_ms = data.time;
 		return true;
 	}

@@ -39,11 +39,20 @@
 #include "led.h"
 
 #include "ugv_localization.h"
+#include "ugv_drive.h"
 
 UART* uartPtr;
 
+#define UGV_DRIVE_PIN 0 // PWM port 1 for the drive motor
+#define UGV_STEER_PIN 1 // PWM port 2 for the steering servo
+
 #define FLEXIPORT_UART UART3
 #define MAINPORT_UART UART1
+
+#define LON_TOLERANCE .0001
+#define LAT_TOLERANCE .0001
+
+#define KP_THETA = 1
 
 static void _putc(void *p, char c)
 {
@@ -76,12 +85,27 @@ int main()
 	printf("Printf initialized!\n\r");
 	UGV_LOCALIZATION ugv_localization;
 	ugv_localization.init(FLEXIPORT_UART);
-	delay(1000);
+  UGV_DRIVE ugv_drive;
+  ugv_drive.init(UGV_DRIVE_PIN, UGV_STEER_PIN);
 
-	while(true) {
-		if(ugv_localization.pull_gps()) {
-			ugv_localization.print_gps();
-			led1.toggle();
-		}
+	delay(1000);
+  ugv_drive.setDriveSpeed(1);
+
+
+	do {
+    if(ugv_localization.pull_gps()) {
+      ugv_localization.print_gps();
+      led1.toggle();
+    }
+    while()
+    float delta_lat = COORD_DRIVE_TARGET_N - ugv_localization.lla[0];
+    float delta_lon = COORD_DRIVE_TARGET_E - ugv_localization.lla[1];
+    theta_r = atan2(delta_lat, delta_lon)*RAD_TO_DEG;
+    theta_err = theta_r - ugv_localization.heading;
+    ugv_drive.setSteeringAngle(theta_err);
+
+  	} while(delta_lat < LAT_TOLERANCE && delta_lon < LON_TOLERANCE)
+    ugv_drive.setDriveSpeed(0);
+
 	}
 }
