@@ -132,6 +132,7 @@ CXXSOURCES = $(SRC_DIR)/gpio.cpp \
              $(PRINTF_DIR)/printf.cpp \
 			 $(SRC_DIR)/pwm.cpp \
 			 $(UGV_SRC_DIR)/ugv_localization.cpp \
+			 $(UGV_SRC_DIR)/ugv_drive.cpp \
              main.cpp
 
 INCLUDE_DIRS =  $(SRC_DIR) \
