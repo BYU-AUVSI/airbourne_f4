@@ -1,4 +1,5 @@
 #include "ublox.h"
+#include "printf.h"
 
 #include <time.h>
 
@@ -44,7 +45,7 @@ void UBLOX::init(UART *uart)
     return;
 
   // Otherwise, Configure the GNSS receiver
-  set_baudrate(115200);
+  set_baudrate(current_baudrate_);
   set_dynamic_mode();
   set_nav_rate(100);
   enable_message(CLASS_NAV, NAV_PVT, 1);
