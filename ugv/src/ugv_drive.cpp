@@ -59,7 +59,7 @@ void UGV_DRIVE::setDriveSpeed(double delta_t)
 {
 	uint32_t throttle = UGV_DRIVE_STOP + (int)(delta_t*(UGV_DRIVE_MAX_PWM - UGV_DRIVE_STOP));
 	drive_pwm.writeUs(throttle);
-	printf("wrote %d to drive\n\r", throttle);
+	//printf("wrote %d to drive\n\r", throttle);
 }
 
 /* setSteeringAngle
@@ -72,7 +72,7 @@ void UGV_DRIVE::setSteeringAngle(double angle)
 	double delta_a = angle/UGV_MAX_STEERING_ANGLE;
 	uint32_t setpoint = UGV_STRAIGHT_PWM + (int) (delta_a*(UGV_LEFT_PWM - UGV_STRAIGHT_PWM));
 	servo_pwm.writeUs(setpoint);
-	printf("wrote %d to steer\n\r", setpoint);
+	//printf("wrote %d to steer\n\r", setpoint);
 }
 
 /* kill
