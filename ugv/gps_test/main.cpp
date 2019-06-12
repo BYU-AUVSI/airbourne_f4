@@ -99,22 +99,32 @@ int main()
 	ugv_drive.init(UGV_DRIVE_PIN, UGV_STEER_PIN);
 
 	printf("Initialization completed\n\r");
+	printf("Waiting for GPS\n\r");
+	while (!ugv_localization.pull_gps()){
+		delay(50);
+		led2.toggle();
+	}
+	printf("GPS aquired\n\r");
+
 	ugv_drive.setDriveSpeed(.3);
 
 	float delta_lat;
 	float delta_lon;
+	float theta_r=0;
+	float theta_err=0;
 
 	do {
 		if(ugv_localization.pull_gps()) {
 			ugv_localization.print_gps();
 			printf("attempting to reach %6.6f lat, %6.6f lon\n\r", COORD_DRIVE_TARGET_N, COORD_DRIVE_TARGET_E);
+			printf("Heading (est, ref, err): (%4.4f, %4.4f, %4.4f)\n\r", ugv_localization.heading);
+			delta_lat = COORD_DRIVE_TARGET_N - ugv_localization.lla[0];
+			delta_lon = COORD_DRIVE_TARGET_E - ugv_localization.lla[1];
 			led1.toggle();
 		}
 
-		float delta_lat = COORD_DRIVE_TARGET_N - ugv_localization.lla[0];
-		float delta_lon = COORD_DRIVE_TARGET_E - ugv_localization.lla[1];
-		float theta_r = atan2(delta_lat, delta_lon)*RAD_TO_DEG;
-		float theta_err = theta_r - ugv_localization.heading;
+		theta_r = atan2(delta_lat, delta_lon)*RAD_TO_DEG;
+		theta_err = theta_r - ugv_localization.heading;
 		ugv_drive.setSteeringAngle(theta_err);
 
 		delay(50);
